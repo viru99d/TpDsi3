@@ -33,13 +33,18 @@ namespace TP3
                 {
                     Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor entre 1 y 2");
                 }
-                if (int.Parse(opcionElegidaInicio) == 1) Curso.RegistrarCurso();
+                if(int.Parse(opcionElegidaInicio) == 1) Curso.RegistrarCurso();
+                if(int.Parse(opcionElegidaInicio) == 2)
+                {
+                    Console.WriteLine("No hay ninguna persona registrada, por favor registrese");
+                    Persona.RegistrarPersona();
+                }
 
+                if(Persona.Personas.Count > 0)
+                {
+                    Curso.MostrarCurso();
 
-
-
-
-
+                }
 
 
             }
@@ -92,10 +97,8 @@ namespace TP3
                 Console.WriteLine(pos + "-" + docentes.NombreDocente +" "+docentes.ApellidoDocente +" -"+docentes.EspecialidadDocente);
                 pos++;
             }
-            
         }
     }
-
 
     public class Curso
     {
@@ -185,11 +188,21 @@ namespace TP3
                     else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + RegistroDocente.Docentes.Count);
                 }
             }
+        }
+        static public void MostrarCurso()
+        {
+            int pos = 1;
+            foreach (var cursos in Cursos)
+            {
+                Console.WriteLine(pos);
+                Console.WriteLine("\n"+cursos.NombreCurso);
+                Console.WriteLine("\n" + cursos.FechaInicioCurso);
+                Console.WriteLine("\n" + cursos.FechaFinalizacionCurso);
 
+                pos++;
+            }
         }
     }
-
- 
 
     public class Inscripcion
     {
@@ -201,6 +214,11 @@ namespace TP3
             Persona = persona;
             Curso = curso;
         }
+        static public void RegistrarInscripcion()
+        {
+
+        }
+
     }
 
     public class Persona
@@ -258,7 +276,6 @@ namespace TP3
                         tipoPersona = GestorCursos.TipoPersonas[value - 1];
                         Persona persona = new Persona(nombre, apellido, dni, email, telefono, tipoPersona);
                         Personas.Add(persona);
-                        Console.WriteLine(tipoPersona.Tipo);
                         break;
                     }
                     else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + GestorCursos.TipoPersonas.Count);
