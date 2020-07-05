@@ -24,20 +24,37 @@ namespace TP3
         {
             while (true)
             {
-                Console.WriteLine("¿Que desea hacer? \n1- Anotarse a un curso \n2- Realizar una cotización");
+                Console.WriteLine("¿Que desea hacer? \n1- Registrar un nuevo curso \n2- Anotarse a un curso");
+
+                var opcionElegidaInicio = Console.ReadLine();
+                Console.Clear();
+
+                while (int.TryParse(opcionElegidaInicio, out _) == false)
+                {
+                    Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor entre 1 y 2");
+                }
+                if (int.Parse(opcionElegidaInicio) == 1) Curso.RegistrarCurso();
+
+
+
+
+
+
+
+
             }
         }
     }
 
     public class Docente
     {
-        private string NombreDocente { get; set; }
-        private string ApellidoDocente { get; set; }
+        public string NombreDocente { get; set; }
+        public string ApellidoDocente { get; set; }
         private string DomicilioDocente { get; set; }
         private string TelefonoDocente { get; set; }
         private string MailDocente { get; set; }
         private string DniDocente { get; set; }
-        private string EspecialidadDocente { get; set; }
+        public string EspecialidadDocente { get; set; }
 
         public Docente(string nombreDocente, string apellidoDocente, string domicilioDocente, string telefonoDocente, string mailDocente, string dniDocente, string especialidadDocente)
         {
@@ -49,6 +66,7 @@ namespace TP3
             DniDocente = dniDocente;
             EspecialidadDocente = especialidadDocente;
         }
+
     }
 
     public class RegistroDocente
@@ -63,47 +81,115 @@ namespace TP3
             Docentes.Add(new Docente("Agustina", "Perez", "San Francisco", "3564365432", "Agustina123@gmail.com", "36543987", "Licenciada en economía"));
             Docentes.Add(new Docente("Juan Carlos", "Gonzalez", "Arroyito", "3566432312", "JuanCarlos32@gmail.com", "20876543", "Licenciado  en ciencias políticas"));
         }
+
+        static public void MostrarDocentes()
+        {
+            Console.WriteLine("\nLISTA DE DOCENTES:");
+
+            int pos = 1;
+            foreach (var docentes in Docentes)
+            {
+                Console.WriteLine(pos + "-" + docentes.NombreDocente +" "+docentes.ApellidoDocente +" -"+docentes.EspecialidadDocente);
+                pos++;
+            }
+            
+        }
     }
 
 
     public class Curso
     {
+        public static List<Curso> Cursos = new List<Curso>();
         private string NombreCurso { get; set; }
         private DateTime FechaInicioCurso { get; set; }
         private DateTime FechaFinalizacionCurso { get; set; }
         private DateTime FechaFinInscripcion { get; set; }
-        private List<Docente> Docente { get; set; }
         private string DiasCurso { get; set; }
         private string HorariosCurso { get; set; }
         private int AulaCurso { get; set; }
         private int CupoDisponibleCurso { get; set; }
         private int CupoMinimoCurso { get; set; }
 
-        public Curso(string nombreCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, List<Docente> docenteCurso, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso)
+        public static List<Docente> Docente = new List<Docente>();
+
+        public Curso(string nombreCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
         {
             NombreCurso = nombreCurso;
             FechaInicioCurso = fechaInicioCurso;
             FechaFinalizacionCurso = fechaFinalizacionCurso;
             FechaFinInscripcion = fechaFinInscripcion;
-            Docente = docenteCurso;
             DiasCurso = diasCurso;
             HorariosCurso = horariosCurso;
             AulaCurso = aulaCurso;
             CupoDisponibleCurso = cupoDisponibleCurso;
             CupoMinimoCurso = cupoMinimoCurso;
+            Docente = docenteCurso;
 
         }
-    }
 
-    public class RegistroCurso
-    {
-        public static List<Curso> Cursos = new List<Curso>();
-
-        static RegistroCurso()
+        static public void RegistrarCurso()
         {
+            Console.WriteLine("\nREGISTRO DE CURSOS");
+
+            Console.WriteLine("\nIngrese el nombre del curso:");
+            string nombreCurso = Console.ReadLine();
+
+            Console.WriteLine("\nIngrese la fecha de comienzo del curso:");
+            DateTime fechaInicioCurso = DateTime.Parse(Console.ReadLine());
+
+            Console.WriteLine("\nIngrese la fecha de finalizacion del curso:");
+            DateTime fechaFinalizacionCurso = DateTime.Parse(Console.ReadLine());
+
+            Console.WriteLine("\nIngrese la fecha que finaliza la inscripcion del curso:");
+            DateTime fechaFinInscripcion = DateTime.Parse(Console.ReadLine());
+
+            Console.WriteLine("\nIngrese los dias en que se va a dictar el curso:");
+            string diasCurso = Console.ReadLine();
+
+            Console.WriteLine("\nIngrese el horario en que se va a dictar el curso:");
+            string horariosCurso = Console.ReadLine();
+
+            Console.WriteLine("\nIngrese el aula en que se va a dictar el curso:");
+            int aulaCurso = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("\nIngrese el cupo maximo de personas que tiene el curso:");
+            int cupoDisponibleCurso = int.Parse(Console.ReadLine());
+
+            Console.WriteLine("\nIngrese el cupo minimo de personas que tiene que tener el curso:");
+            int cupoMinimoCurso = int.Parse(Console.ReadLine());
+
+            while (true)
+            {
+                Console.WriteLine("\nSeleccione el docente que va a dictar el curso:");
+                RegistroDocente.MostrarDocentes();
+                Docente docenteCurso;
+
+                var opcionElegidaDocente = Console.ReadLine();
+                if ((int.TryParse(opcionElegidaDocente, out var value)))
+                {
+                    if (value >= 1 && value <= RegistroDocente.Docentes.Count)
+                    {
+                        docenteCurso = RegistroDocente.Docentes[int.Parse(opcionElegidaDocente) - 1];
+                        Docente.Add(docenteCurso);
+
+                        Console.WriteLine("\n¿Desea cargar otro docente al curso? \n1-Si \n2- No");
+                        var opcionElegidaCargarDocente = Console.ReadLine();
+                       
+                        if (int.Parse(opcionElegidaCargarDocente) == 2)
+                        {
+                            Curso curso = new Curso(nombreCurso, fechaInicioCurso, fechaFinalizacionCurso, fechaFinInscripcion, diasCurso, horariosCurso, aulaCurso, cupoDisponibleCurso, cupoMinimoCurso, Docente);
+                            Cursos.Add(curso);
+                            break;
+                        }
+                    }
+                    else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + RegistroDocente.Docentes.Count);
+                }
+            }
 
         }
     }
+
+ 
 
     public class Inscripcion
     {
