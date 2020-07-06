@@ -17,7 +17,9 @@ namespace TP3
                 var finalizado = ProcesoCursos();
 
                 if (finalizado) break;
+
             }
+            System.Console.WriteLine("\nGracias por visitarnos, vuelva pronto");
         }
 
         static public bool ProcesoCursos()
@@ -31,21 +33,58 @@ namespace TP3
 
                 while (int.TryParse(opcionElegidaInicio, out _) == false)
                 {
-                    Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor entre 1 y 2");
+                    Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor entre 1 y 3");
                 }
-                if(int.Parse(opcionElegidaInicio) == 1) Curso.RegistrarCurso();
-                if(int.Parse(opcionElegidaInicio) == 2)
+                if (int.Parse(opcionElegidaInicio) == 1) Curso.RegistrarCurso();
+                if (int.Parse(opcionElegidaInicio) == 2)
                 {
                     Console.WriteLine("No hay ninguna persona registrada, por favor registrese");
                     Persona.RegistrarPersona();
+
+                    if (Persona.Personas.Count > 0)
+                    {
+                        Console.Clear();
+                        Curso.MostrarCursos();
+                        Console.WriteLine("Seleccione el curso al que desea anotarse");
+                        Curso cursoElegido;
+                        while (true)
+                        {
+                            var opcionElegidaCurso = Console.ReadLine();
+                            if (int.TryParse(opcionElegidaCurso, out var value))
+                            {
+                                if (value >= 1 && value <= Curso.Cursos.Count)
+                                {
+                                    cursoElegido = Curso.Cursos[value - 1];
+                                    Persona.MostrarPersonas();
+                                    Persona personaElegida;
+                                    while (true)
+                                    {
+                                        Console.WriteLine("Seleccione el postulante:");
+                                        var opcionElegidaPostulante = Console.ReadLine();
+                                        if(int.TryParse(opcionElegidaPostulante, out var value1))
+                                        {
+                                            if(value1>=1 && value1 <= Persona.Personas.Count)
+                                            {
+                                                personaElegida = Persona.Personas[value - 1];
+                                                Inscripcion inscripcion = new Inscripcion(personaElegida, cursoElegido);
+                                                break;
+                                            }
+                                            else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + Persona.Personas.Count);
+                                        }
+                                    }
+                                }
+                                else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + GestorCursos.TipoPersonas.Count);
+                            }
+                        }
+                    }
                 }
+                Console.Clear();
+                Console.WriteLine("\nDesea seguir navegando?   \n1- Sí \n2- No");
+                var opcionElegidaSeguir = int.Parse(Console.ReadLine());
+                Console.Clear();
+                if (opcionElegidaSeguir == 1) return false;
 
-                if(Persona.Personas.Count > 0)
-                {
-                    Curso.MostrarCurso();
-
-                }
-
+                else return true;
 
             }
         }
@@ -113,9 +152,9 @@ namespace TP3
         private int CupoDisponibleCurso { get; set; }
         private int CupoMinimoCurso { get; set; }
 
-        public static List<Docente> Docente = new List<Docente>();
+        public static List<Docente> Docente = new List<Docente>(); 
 
-        public Curso(string nombreCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
+    public Curso(string nombreCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
         {
             NombreCurso = nombreCurso;
             FechaInicioCurso = fechaInicioCurso;
@@ -152,7 +191,7 @@ namespace TP3
             Console.WriteLine("\nIngrese el horario en que se va a dictar el curso:");
             string horariosCurso = Console.ReadLine();
 
-            Console.WriteLine("\nIngrese el aula en que se va a dictar el curso:");
+            Console.WriteLine("\nIngrese el numero de aula en que se va a dictar el curso:");
             int aulaCurso = int.Parse(Console.ReadLine());
 
             Console.WriteLine("\nIngrese el cupo maximo de personas que tiene el curso:");
@@ -175,8 +214,9 @@ namespace TP3
                         docenteCurso = RegistroDocente.Docentes[int.Parse(opcionElegidaDocente) - 1];
                         Docente.Add(docenteCurso);
 
-                        Console.WriteLine("\n¿Desea cargar otro docente al curso? \n1-Si \n2- No");
+                        Console.WriteLine("\n¿Desea cargar otro docente al curso? \n1-Si \n2-No");
                         var opcionElegidaCargarDocente = Console.ReadLine();
+                        Console.Clear();
                        
                         if (int.Parse(opcionElegidaCargarDocente) == 2)
                         {
@@ -189,15 +229,24 @@ namespace TP3
                 }
             }
         }
-        static public void MostrarCurso()
+        static public void MostrarCursos()
         {
+            Console.WriteLine("\n LISTADO DE CURSOS: \n");
             int pos = 1;
             foreach (var cursos in Cursos)
             {
-                Console.WriteLine(pos);
-                Console.WriteLine("\n"+cursos.NombreCurso);
-                Console.WriteLine("\n" + cursos.FechaInicioCurso);
-                Console.WriteLine("\n" + cursos.FechaFinalizacionCurso);
+                
+                Console.WriteLine("Curso N° " +pos);
+                Console.WriteLine("Nombre: "+cursos.NombreCurso);
+                Console.WriteLine("Comienza el día " + cursos.FechaInicioCurso);
+                Console.WriteLine("Finaliza el día " + cursos.FechaFinalizacionCurso);
+                Console.WriteLine("La inscripcion finaliza el día: " + cursos.FechaFinInscripcion);
+                Console.WriteLine("El curso es dictado los días " + cursos.DiasCurso);
+                Console.WriteLine("El horario en que se dicta el curso es " + cursos.HorariosCurso);
+                Console.WriteLine("El curso se dicta en el aula " + cursos.AulaCurso);
+                Console.WriteLine("El cupo maximo del curso es " + cursos.CupoDisponibleCurso+" personas");
+                Console.WriteLine("El cupo mínimo del curso es " + cursos.CupoMinimoCurso + " personas");
+                Console.WriteLine("--------------------------------------");
 
                 pos++;
             }
@@ -214,11 +263,12 @@ namespace TP3
             Persona = persona;
             Curso = curso;
         }
-        static public void RegistrarInscripcion()
+
+        public static void MostrarInscripcion()
         {
 
         }
-
+      
     }
 
     public class Persona
@@ -261,9 +311,8 @@ namespace TP3
             Console.WriteLine("\nIngrese su telefono:");
             string telefono = Console.ReadLine();
 
-            System.Console.WriteLine("\n Seleccione su categoria:");
+            System.Console.WriteLine("\nSeleccione su categoria:");
             TipoPersona.mostrartipoPersona();
-
 
             TipoPersona tipoPersona;
             while (true)
@@ -282,6 +331,26 @@ namespace TP3
                 }
             }
         }
+
+        static public void MostrarPersonas()
+        {
+            Console.WriteLine("\n LISTADO DE POSTULANTES: \n");
+            int pos = 1;
+            foreach (var personas in Personas)
+            {
+                
+                Console.WriteLine("Persona N°: " + pos);
+                Console.WriteLine("Nombre y apellido: " + personas.Nombre +" " +personas.Apellido +" Dni: " +personas.Dni);
+                Console.WriteLine("--------------------------------------");
+
+                pos++;
+            }
+            Console.WriteLine("\n Seleccione el postulante: \n");
+        }
+
+
+
+
     }
 
     public class TipoPersona
