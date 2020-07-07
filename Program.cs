@@ -66,7 +66,11 @@ namespace TP3
                                             if(value1>=1 && value1 <= Persona.Personas.Count)
                                             {
                                                 personaElegida = Persona.Personas[value - 1];
-                                                Inscripcion inscripcion = new Inscripcion(personaElegida, cursoElegido);
+                                                DateTime fechaInscripcion = DateTime.Now;
+                                                Inscripcion inscripcion = new Inscripcion(personaElegida, cursoElegido, fechaInscripcion);
+                                                Inscripcion.Inscripciones.Add(inscripcion);
+                                                Console.Clear();
+                                                Inscripcion.MostrarInscripcion();
                                                 break;
                                             }
                                             else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + Persona.Personas.Count);
@@ -78,6 +82,7 @@ namespace TP3
                         }
                     }
                 }
+
                 Console.Clear();
                 Console.WriteLine("\nDesea seguir navegando?   \n1- Sí \n2- No");
                 var opcionElegidaSeguir = int.Parse(Console.ReadLine());
@@ -89,7 +94,7 @@ namespace TP3
             }
         }
     }
-
+    
     public class Docente
     {
         public string NombreDocente { get; set; }
@@ -141,22 +146,24 @@ namespace TP3
 
     public class Curso
     {
+        public static List<Docente> Docente = new List<Docente>();
         public static List<Curso> Cursos = new List<Curso>();
-        private string NombreCurso { get; set; }
-        private DateTime FechaInicioCurso { get; set; }
+        public string NombreCurso { get; set; }
+        public string DescripcionCurso { get; set; }
+        public DateTime FechaInicioCurso { get; set; }
         private DateTime FechaFinalizacionCurso { get; set; }
         private DateTime FechaFinInscripcion { get; set; }
-        private string DiasCurso { get; set; }
-        private string HorariosCurso { get; set; }
-        private int AulaCurso { get; set; }
+        public string DiasCurso { get; set; }
+        public string HorariosCurso { get; set; }
+        public int AulaCurso { get; set; }
         private int CupoDisponibleCurso { get; set; }
         private int CupoMinimoCurso { get; set; }
+        
 
-        public static List<Docente> Docente = new List<Docente>(); 
-
-    public Curso(string nombreCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
+    public Curso(string nombreCurso, string descripcionCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
         {
             NombreCurso = nombreCurso;
+            DescripcionCurso = descripcionCurso;
             FechaInicioCurso = fechaInicioCurso;
             FechaFinalizacionCurso = fechaFinalizacionCurso;
             FechaFinInscripcion = fechaFinInscripcion;
@@ -175,6 +182,9 @@ namespace TP3
 
             Console.WriteLine("\nIngrese el nombre del curso:");
             string nombreCurso = Console.ReadLine();
+
+            Console.WriteLine("\nIngrese a quien está dirigido el curso:");
+            string descripcionCurso = Console.ReadLine();
 
             Console.WriteLine("\nIngrese la fecha de comienzo del curso:");
             DateTime fechaInicioCurso = DateTime.Parse(Console.ReadLine());
@@ -220,7 +230,7 @@ namespace TP3
                        
                         if (int.Parse(opcionElegidaCargarDocente) == 2)
                         {
-                            Curso curso = new Curso(nombreCurso, fechaInicioCurso, fechaFinalizacionCurso, fechaFinInscripcion, diasCurso, horariosCurso, aulaCurso, cupoDisponibleCurso, cupoMinimoCurso, Docente);
+                            Curso curso = new Curso(nombreCurso,descripcionCurso, fechaInicioCurso, fechaFinalizacionCurso, fechaFinInscripcion, diasCurso, horariosCurso, aulaCurso, cupoDisponibleCurso, cupoMinimoCurso, Docente);
                             Cursos.Add(curso);
                             break;
                         }
@@ -255,18 +265,32 @@ namespace TP3
 
     public class Inscripcion
     {
+        public static List<Inscripcion> Inscripciones = new List<Inscripcion>();
+        private DateTime FechaInscripcion { get; set; }
         private Persona Persona { get; set; }
         private Curso Curso { get; set; }
 
-        public Inscripcion(Persona persona, Curso curso)
+        public Inscripcion(Persona persona, Curso curso, DateTime fechaInscripcion)
         {
             Persona = persona;
             Curso = curso;
+            FechaInscripcion = fechaInscripcion;
         }
 
-        public static void MostrarInscripcion()
+        static public void MostrarInscripcion()
         {
-
+            foreach(var inscripcion in Inscripciones)
+            {
+                Console.WriteLine("\nCOMPROBANTE DE INSCRIPCIÓN:");
+                Console.WriteLine("Fecha de inscripción: " + inscripcion.FechaInscripcion);
+                Console.WriteLine("Nombre del curso: " + inscripcion.Curso.NombreCurso);
+                Console.WriteLine("Inicio del curso: " + inscripcion.Curso.FechaInicioCurso);
+                Console.WriteLine("Dias que se dicta el curso: " + inscripcion.Curso.DiasCurso);
+                Console.WriteLine("Aula en que se dicta el curso: " + inscripcion.Curso.AulaCurso);
+                Console.WriteLine("Nombre del postulante: " + inscripcion.Persona.Nombre + " " + inscripcion.Persona.Apellido + " Dni:" + inscripcion.Persona.Dni);
+                Console.WriteLine(" ");
+            }
+            
         }
       
     }
@@ -274,9 +298,9 @@ namespace TP3
     public class Persona
     {
         public static List<Persona> Personas = new List<Persona>();
-        private string Nombre { get; set; }
-        private string Apellido { get; set; }
-        private string Dni { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+        public string Dni { get; set; }
         private string Email { get; set; }
         private string Telefono { get; set; }
         private TipoPersona TipoPersona { get; set; }
