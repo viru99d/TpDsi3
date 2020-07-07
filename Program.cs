@@ -149,7 +149,7 @@ namespace TP3
         public static List<Docente> Docente = new List<Docente>();
         public static List<Curso> Cursos = new List<Curso>();
         public string NombreCurso { get; set; }
-        public string DescripcionCurso { get; set; }
+        private string DescripcionCurso { get; set; }
         public DateTime FechaInicioCurso { get; set; }
         private DateTime FechaFinalizacionCurso { get; set; }
         private DateTime FechaFinInscripcion { get; set; }
