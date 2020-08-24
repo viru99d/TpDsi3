@@ -16,6 +16,7 @@ namespace TP3
 
             while (true)
             {
+               
                 var finalizado = ProcesoCursos();
 
                 if (finalizado) break;
@@ -72,6 +73,9 @@ namespace TP3
                                                 Inscripcion inscripcion = new Inscripcion(personaElegida, cursoElegido, fechaInscripcion);
                                                 Inscripcion.Inscripciones.Add(inscripcion);
 
+                                                var inscripcionJson = JsonConvert.SerializeObject(Inscripcion.Inscripciones, Formatting.Indented);
+                                                System.IO.File.WriteAllText("Inscripcion.Json", inscripcionJson);
+
 
                                                 Console.Clear();
                                                 Inscripcion.MostrarInscripcion();
@@ -119,7 +123,6 @@ namespace TP3
             DniDocente = dniDocente;
             EspecialidadDocente = especialidadDocente;
         }
-
     }
 
     public class RegistroDocente
@@ -144,11 +147,17 @@ namespace TP3
         {
             Console.WriteLine("\nLISTA DE DOCENTES:");
 
-            int pos = 1;
-            foreach (var docentes in Docentes)
+            if (System.IO.File.Exists("docente.json"))
             {
-                Console.WriteLine(pos + "-" + docentes.NombreDocente +" "+docentes.ApellidoDocente +" -"+docentes.EspecialidadDocente);
-                pos++;
+                string ArchivoDocentes = System.IO.File.ReadAllText("Docente.json");
+                List<Docente> docentesJson = JsonConvert.DeserializeObject<List<Docente>>(ArchivoDocentes);
+
+                int pos = 1;
+                foreach (var docentes in docentesJson)
+                {
+                    Console.WriteLine(pos + "-" + docentes.NombreDocente + " " + docentes.ApellidoDocente + " -" + docentes.EspecialidadDocente);
+                    pos++;
+                }
             }
         }
     }
@@ -255,40 +264,33 @@ namespace TP3
         }
         static public void MostrarCursos()
         {
+            Console.WriteLine("\n LISTADO DE CURSOS: \n");
 
             if (System.IO.File.Exists("Cursos.json"))
             {
                 string ArchivoCursos = System.IO.File.ReadAllText("Cursos.json");
                 List<Curso> cursoJson = JsonConvert.DeserializeObject<List<Curso>>(ArchivoCursos);
-                if (cursoJson.Count != 0)
+              
+
+                int pos = 1;
+                foreach (var cursos in cursoJson)
                 {
-                    Cursos = cursoJson;
-                }
-            }
-            else
-            {
-                RegistrarCurso();
-            }
-   
-
-        Console.WriteLine("\n LISTADO DE CURSOS: \n");
-            int pos = 1;
-            foreach (var cursos in Cursos)
-            {
                 
-                Console.WriteLine("Curso N° " +pos);
-                Console.WriteLine("Nombre: "+cursos.NombreCurso);
-                Console.WriteLine("Comienza el día " + cursos.FechaInicioCurso);
-                Console.WriteLine("Finaliza el día " + cursos.FechaFinalizacionCurso);
-                Console.WriteLine("La inscripcion finaliza el día: " + cursos.FechaFinInscripcion);
-                Console.WriteLine("El curso es dictado los días " + cursos.DiasCurso);
-                Console.WriteLine("El horario en que se dicta el curso es " + cursos.HorariosCurso);
-                Console.WriteLine("El curso se dicta en el aula " + cursos.AulaCurso);
-                Console.WriteLine("El cupo maximo del curso es " + cursos.CupoDisponibleCurso+" personas");
-                Console.WriteLine("El cupo mínimo del curso es " + cursos.CupoMinimoCurso + " personas");
-                Console.WriteLine("--------------------------------------");
+                    Console.WriteLine("Curso N° " +pos);
+                    Console.WriteLine("Nombre: "+cursos.NombreCurso);
+                    Console.WriteLine("Comienza el día " + cursos.FechaInicioCurso);
+                    Console.WriteLine("Finaliza el día " + cursos.FechaFinalizacionCurso);
+                    Console.WriteLine("La inscripcion finaliza el día: " + cursos.FechaFinInscripcion);
+                    Console.WriteLine("El curso es dictado los días " + cursos.DiasCurso);
+                    Console.WriteLine("El horario en que se dicta el curso es " + cursos.HorariosCurso);
+                    Console.WriteLine("El curso se dicta en el aula " + cursos.AulaCurso);
+                    Console.WriteLine("El cupo maximo del curso es " + cursos.CupoDisponibleCurso+" personas");
+                    Console.WriteLine("El cupo mínimo del curso es " + cursos.CupoMinimoCurso + " personas");
+                    Console.WriteLine("--------------------------------------");
 
-                pos++;
+                    pos++;
+                }
+
             }
         }
     }
@@ -309,18 +311,24 @@ namespace TP3
 
         static public void MostrarInscripcion()
         {
-            foreach(var inscripcion in Inscripciones)
+            if (System.IO.File.Exists("personas.json"))
             {
-                Console.WriteLine("\nCOMPROBANTE DE INSCRIPCIÓN:");
-                Console.WriteLine("Fecha de inscripción: " + inscripcion.FechaInscripcion);
-                Console.WriteLine("Nombre del curso: " + inscripcion.Curso.NombreCurso);
-                Console.WriteLine("Inicio del curso: " + inscripcion.Curso.FechaInicioCurso);
-                Console.WriteLine("Dias que se dicta el curso: " + inscripcion.Curso.DiasCurso);
-                Console.WriteLine("Aula en que se dicta el curso: " + inscripcion.Curso.AulaCurso);
-                Console.WriteLine("Nombre del postulante: " + inscripcion.Persona.Nombre + " " + inscripcion.Persona.Apellido + " Dni:" + inscripcion.Persona.Dni);
-                Console.WriteLine(" ");
+                string ArchivoInscripciones = System.IO.File.ReadAllText("inscripcion.json");
+                List<Inscripcion> IncripcionJson = JsonConvert.DeserializeObject<List<Inscripcion>>(ArchivoInscripciones);
+
+
+                foreach (var inscripcion in IncripcionJson)
+                {
+                    Console.WriteLine("\nCOMPROBANTE DE INSCRIPCIÓN:");
+                    Console.WriteLine("Fecha de inscripción: " + inscripcion.FechaInscripcion);
+                    Console.WriteLine("Nombre del curso: " + inscripcion.Curso.NombreCurso);
+                    Console.WriteLine("Inicio del curso: " + inscripcion.Curso.FechaInicioCurso);
+                    Console.WriteLine("Dias que se dicta el curso: " + inscripcion.Curso.DiasCurso);
+                    Console.WriteLine("Aula en que se dicta el curso: " + inscripcion.Curso.AulaCurso);
+                    Console.WriteLine("Nombre del postulante: " + inscripcion.Persona.Nombre + " " + inscripcion.Persona.Apellido + " Dni:" + inscripcion.Persona.Dni);
+                    Console.WriteLine(" ");
+                }
             }
-            
         }
       
     }
@@ -393,32 +401,27 @@ namespace TP3
         static public void MostrarPersonas()
 
         {
-            if (System.IO.File.Exists("Personas.json"))
+            Console.WriteLine("\n LISTADO DE POSTULANTES: \n");
+
+            if (System.IO.File.Exists("personas.json"))
             {
-                string ArchivoPersonas = System.IO.File.ReadAllText("Personas.json");
+                string ArchivoPersonas = System.IO.File.ReadAllText("personas.json");
                 List<Persona> PersonaJson = JsonConvert.DeserializeObject<List<Persona>>(ArchivoPersonas);
-                if (PersonaJson.Count != 0)
+
+
+                int pos = 1;
+                foreach (var personas in PersonaJson)
                 {
-                    Personas = PersonaJson;
+
+                    Console.WriteLine("Persona N°: " + pos);
+                    Console.WriteLine("Nombre y apellido: " + personas.Nombre + " " + personas.Apellido + " Dni: " + personas.Dni);
+                    Console.WriteLine("--------------------------------------");
+
+                    pos++;
                 }
             }
-            else
-            {
-                RegistrarPersona();
-            }
 
-            Console.WriteLine("\n LISTADO DE POSTULANTES: \n");
-            int pos = 1;
-            foreach (var personas in Personas)
-            {
-                
-                Console.WriteLine("Persona N°: " + pos);
-                Console.WriteLine("Nombre y apellido: " + personas.Nombre +" " +personas.Apellido +" Dni: " +personas.Dni);
-                Console.WriteLine("--------------------------------------");
-
-                pos++;
-            }
-            Console.WriteLine("\n Seleccione el postulante: \n");
+            Console.WriteLine("\nSeleccione el postulante: \n");
         }
 
 
