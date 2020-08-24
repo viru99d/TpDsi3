@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+
 
 namespace TP3
 {
@@ -232,6 +234,10 @@ namespace TP3
                         {
                             Curso curso = new Curso(nombreCurso,descripcionCurso, fechaInicioCurso, fechaFinalizacionCurso, fechaFinInscripcion, diasCurso, horariosCurso, aulaCurso, cupoDisponibleCurso, cupoMinimoCurso, Docente);
                             Cursos.Add(curso);
+                            
+                            var cursoJson = JsonConvert.SerializeObject(Cursos, Formatting.Indented);
+                            System.IO.File.WriteAllText("Cursos.Json", cursoJson);
+
                             break;
                         }
                     }
@@ -371,8 +377,6 @@ namespace TP3
             }
             Console.WriteLine("\n Seleccione el postulante: \n");
         }
-
-
 
 
     }
