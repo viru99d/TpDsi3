@@ -10,6 +10,9 @@ namespace TP3
         static public List<TipoPersona> TipoPersonas = new List<TipoPersona>();
         static void Main(string[] args)
         {
+
+            RegistroDocente.RegistrarDocente();
+
             TipoPersonas.Add(new TipoPersona("1-Alumno"));
             TipoPersonas.Add(new TipoPersona("2-Docente"));
             TipoPersonas.Add(new TipoPersona("3-Publico en general"));
@@ -18,7 +21,6 @@ namespace TP3
             {
                
                 var finalizado = ProcesoCursos();
-
                 if (finalizado) break;
 
             }
@@ -129,7 +131,7 @@ namespace TP3
     {
         public static List<Docente> Docentes = new List<Docente>();
 
-        static RegistroDocente()
+        static public void RegistrarDocente()
         {
             Docentes.Add(new Docente("Juan Pablo", "Martinez", "San Francisco", "3564662463", "JuanPablo@Utn.com", "16073613", "Ingeniero en sistemas"));
             Docentes.Add(new Docente("Martin", "Gomez", "Devoto", "3564623212", "Martin@gmail.com", "17720536", "Ingeniero Quimico"));
