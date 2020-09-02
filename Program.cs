@@ -7,15 +7,11 @@ namespace TP3
 {
     class GestorCursos
     {
-        static public List<TipoPersona> TipoPersonas = new List<TipoPersona>();
+       
         static void Main(string[] args)
         {
 
             RegistroDocente.RegistrarDocente();
-
-            TipoPersonas.Add(new TipoPersona("Alumno"));
-            TipoPersonas.Add(new TipoPersona("Docente"));
-            TipoPersonas.Add(new TipoPersona("Publico en general"));
 
             while (true)
             {
@@ -46,11 +42,7 @@ namespace TP3
 
                     string ArchivoPersonas = System.IO.File.ReadAllText("Personas.json");
                     List<Persona> personaJson = JsonConvert.DeserializeObject<List<Persona>>(ArchivoPersonas);
-                    if (personaJson.Count > 0)
-                    {
-                        Persona.Personas = personaJson;
-                    }
-
+                    
                     string ArchivoCursos = System.IO.File.ReadAllText("Cursos.json");
                     List<Curso> cursoJson = JsonConvert.DeserializeObject<List<Curso>>(ArchivoCursos);
                     if (cursoJson.Count > 0)
@@ -59,7 +51,7 @@ namespace TP3
                     }
 
 
-                    if (Persona.Personas.Count >0)
+                    if (personaJson.Count >0)
                     {
                         Console.Clear();
                         Curso.MostrarCursos();
@@ -81,9 +73,9 @@ namespace TP3
                                         if(int.TryParse(opcionElegidaPostulante, out var value1))
                                         {
                      
-                                            if (value1>=1 && value1 <= Persona.Personas.Count)
+                                            if (value1>=1 && value1 <=  personaJson.Count)
                                             {
-                                                personaElegida = Persona.Personas[value1 - 1];
+                                                personaElegida = personaJson[value1 - 1];
                                                 DateTime fechaInscripcion = DateTime.Now;
                                                 Inscripcion inscripcion = new Inscripcion(personaElegida, cursoElegido, fechaInscripcion);
                                                 Inscripcion.Inscripciones.Add(inscripcion);
@@ -96,7 +88,7 @@ namespace TP3
 
                                                 break;
                                             }
-                                            else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 0 y menor a " + Persona.Personas.Count);
+                                            else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 0 y menor a " + personaJson.Count);
                                             break;
                                         }
                                        
@@ -201,10 +193,9 @@ namespace TP3
         public int CupoMinimoCurso { get; set; }
         
 
-    public Curso(string nombreCurso, string descripcionCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
+    public Curso(string nombreCurso, DateTime fechaInicioCurso, DateTime fechaFinalizacionCurso, DateTime fechaFinInscripcion, string diasCurso, string horariosCurso, int aulaCurso, int cupoDisponibleCurso, int cupoMinimoCurso, List<Docente> docenteCurso)
         {
             NombreCurso = nombreCurso;
-            DescripcionCurso = descripcionCurso;
             FechaInicioCurso = fechaInicioCurso;
             FechaFinalizacionCurso = fechaFinalizacionCurso;
             FechaFinInscripcion = fechaFinInscripcion;
@@ -223,9 +214,6 @@ namespace TP3
 
             Console.WriteLine("\nIngrese el nombre del curso:");
             string nombreCurso = Console.ReadLine();
-
-            Console.WriteLine("\nIngrese a quien está dirigido el curso:");
-            string descripcionCurso = Console.ReadLine();
 
             Console.WriteLine("\nIngrese la fecha de comienzo del curso:");
             DateTime fechaInicioCurso = DateTime.Parse(Console.ReadLine());
@@ -271,7 +259,7 @@ namespace TP3
                        
                         if (int.Parse(opcionElegidaCargarDocente) == 2)
                         {
-                            Curso curso = new Curso(nombreCurso,descripcionCurso, fechaInicioCurso, fechaFinalizacionCurso, fechaFinInscripcion, diasCurso, horariosCurso, aulaCurso, cupoDisponibleCurso, cupoMinimoCurso, Docente);
+                            Curso curso = new Curso(nombreCurso, fechaInicioCurso, fechaFinalizacionCurso, fechaFinInscripcion, diasCurso, horariosCurso, aulaCurso, cupoDisponibleCurso, cupoMinimoCurso, Docente);
                             Cursos.Add(curso);
                             
                             var cursoJson = JsonConvert.SerializeObject(Cursos, Formatting.Indented);
@@ -356,22 +344,22 @@ namespace TP3
 
     public class Persona
     {
-        public static List<Persona> Personas = new List<Persona>();
+      
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public string Dni { get; set; }
         public string Email { get; set; }
         public string Telefono { get; set; }
-        public TipoPersona TipoPersona { get; set; }
+       
 
-        public Persona(string nombre, string apellido, string dni, string email, string telefono, TipoPersona tipoPersona)
+        public Persona(string nombre, string apellido, string dni, string email, string telefono)
         {
             Nombre = nombre;
             Apellido = apellido;
             Dni = dni;
             Email = email;
             Telefono = telefono;
-            TipoPersona = tipoPersona;
+            
         }
 
         static public void RegistrarPersona()
@@ -394,29 +382,11 @@ namespace TP3
             Console.WriteLine("\nIngrese su telefono:");
             string telefono = Console.ReadLine();
 
-            System.Console.WriteLine("\nSeleccione su categoria:");
-            TipoPersona.MostrarTipoPersona();
+            Persona persona = new Persona(nombre, apellido, dni, email, telefono);
+          
+            var personaJson = JsonConvert.SerializeObject(persona, Formatting.Indented);
+            System.IO.File.WriteAllText("Personas.Json", personaJson);
 
-            TipoPersona tipoPersona;
-            while (true)
-            {
-                var opcionElegidaTipoPersona = Console.ReadLine();
-                if ((int.TryParse(opcionElegidaTipoPersona, out var value)))
-                {
-                    if (value >= 1 && value <= GestorCursos.TipoPersonas.Count)
-                    {
-                        tipoPersona = GestorCursos.TipoPersonas[value - 1];
-                        Persona persona = new Persona(nombre, apellido, dni, email, telefono, tipoPersona);
-                        Personas.Add(persona);
-
-                        var personaJson = JsonConvert.SerializeObject(Personas, Formatting.Indented);
-                        System.IO.File.WriteAllText("Personas.Json", personaJson);
-                        
-                        break;
-                    }
-                    else Console.WriteLine("VALOR INGRESADO INCORRECTO, Ingrese un valor mayor a 1 y menor a " + GestorCursos.TipoPersonas.Count);
-                }
-            }
         }
 
         static public void MostrarPersonas()
@@ -426,7 +396,7 @@ namespace TP3
 
             if (System.IO.File.Exists("Personas.json"))
             {
-                string ArchivoPersonas = System.IO.File.ReadAllText("personas.json");
+                string ArchivoPersonas = System.IO.File.ReadAllText("Personas.json");
                 List<Persona> personaJson = JsonConvert.DeserializeObject<List<Persona>>(ArchivoPersonas);
                 
                 int pos = 1;
@@ -447,24 +417,4 @@ namespace TP3
 
     }
 
-    public class TipoPersona
-    {
-        public string Tipo;
-
-        public TipoPersona(string tipo)
-        {
-            Tipo = tipo;
-        }
-
-        static public void MostrarTipoPersona()
-        {
-            int pos = 1;
-            foreach (var tipo in GestorCursos.TipoPersonas)
-            {
-                Console.WriteLine(pos+"- " + tipo.Tipo);
-                pos++;
-            }
-
-        }
-    }
 }
